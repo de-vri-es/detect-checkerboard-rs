@@ -31,6 +31,12 @@ struct Options {
 	#[structopt(value_name = "0..1")]
 	#[structopt(default_value = "0.005")]
 	max_residual: f32,
+
+	/// Dilation to perform before finding contours.
+	#[structopt(long, short = "d")]
+	#[structopt(value_name = "INTEGER")]
+	#[structopt(default_value = "1")]
+	dilation: u8,
 }
 
 #[show_image::main]
@@ -72,7 +78,11 @@ fn do_main(options: Options) -> Result<(), String> {
 	wait_space(&mut events);
 
 	println!("showing dilated image");
-	let dilated = imageproc::morphology::dilate(&binarized, imageproc::distance_transform::Norm::L1, 1);
+	let dilated = if options.dilation > 0 {
+		imageproc::morphology::dilate(&binarized, imageproc::distance_transform::Norm::L1, options.dilation)
+	} else {
+		binarized.clone()
+	};
 	window.set_image("dilated", dilated.clone()).unwrap();
 	wait_space(&mut events);
 
