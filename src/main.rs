@@ -6,6 +6,8 @@ use std::path::PathBuf;
 use structopt::StructOpt;
 use structopt::clap::AppSettings;
 
+mod corner_filter;
+
 #[derive(StructOpt)]
 #[structopt(setting = AppSettings::ColoredHelp)]
 #[structopt(setting = AppSettings::UnifiedHelpMessage)]
