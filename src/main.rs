@@ -7,6 +7,7 @@ use structopt::StructOpt;
 use structopt::clap::AppSettings;
 
 mod corner_filter;
+mod peak_finder;
 
 #[derive(StructOpt)]
 #[structopt(setting = AppSettings::ColoredHelp)]
