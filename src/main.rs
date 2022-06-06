@@ -1,4 +1,4 @@
-use image::{GenericImageView, buffer::ConvertBuffer};
+use image::buffer::ConvertBuffer;
 use imageproc::point::Point;
 use imageproc::rect::Rect;
 use num::{Num, ToPrimitive};
@@ -101,7 +101,7 @@ fn do_main(options: Options) -> Result<(), String> {
 	let dilated = if options.dilation > 0 {
 		imageproc::morphology::dilate(&binarized, imageproc::distance_transform::Norm::L1, options.dilation)
 	} else {
-		binarized.clone()
+		binarized
 	};
 	window.set_image("dilated", dilated.clone()).unwrap();
 	wait_space(&mut events);
@@ -111,10 +111,10 @@ fn do_main(options: Options) -> Result<(), String> {
 
 	let magenta = image::Rgb([200, 0, 200]);
 	let cyan = image::Rgb([0, 255, 255]);
-	let green = image::Rgb([0, 255, 0]);
+	//let green = image::Rgb([0, 255, 0]);
 	let quads: Vec<_> = contours.iter().map(|c| fit_quadrangle(&c.points)).collect();
 
-	let mut visual = image.clone();
+	let mut visual = image;
 	for (contour, quad) in contours.iter().zip(quads.iter()) {
 		//draw_polygon(&mut visual, &contour.points, magenta);
 
@@ -140,7 +140,7 @@ fn do_main(options: Options) -> Result<(), String> {
 			continue;
 		}
 
-		//draw_polygon(&mut visual, quad, cyan);
+		draw_polygon(&mut visual, quad, cyan);
 		let search_radius = area.sqrt() * 0.10;
 		println!("fine-tuning quads with search radius {}", search_radius);
 
@@ -161,10 +161,9 @@ fn do_main(options: Options) -> Result<(), String> {
 	Ok(())
 }
 
-fn draw_polygon<T, C>(image: &mut image::ImageBuffer<image::Rgb<u8>, C>, points: &[Point<i32>], color: image::Rgb<u8>)
+fn draw_polygon<C>(image: &mut image::ImageBuffer<image::Rgb<u8>, C>, points: &[Point<i32>], color: image::Rgb<u8>)
 where
 	C: std::ops::Deref<Target = [u8]> + std::ops::DerefMut,
-	T: num::NumCast,
 {
 	for (a, b) in points.iter().zip(points.iter().cycle().skip(1)) {
 		let a = (a.x.to_i32().unwrap(), a.y.to_i32().unwrap());
@@ -173,14 +172,14 @@ where
 	}
 }
 
-fn draw_points<C>(image: &mut image::ImageBuffer<image::Rgb<u8>, C>, points: &[Point<i32>], color: image::Rgb<u8>)
-where
-	C: std::ops::Deref<Target = [u8]> + std::ops::DerefMut,
-{
-	for point in points {
-		imageproc::drawing::draw_cross_mut(image, color, point.x.to_i32().unwrap(), point.y.to_i32().unwrap())
-	}
-}
+// fn draw_points<C>(image: &mut image::ImageBuffer<image::Rgb<u8>, C>, points: &[Point<i32>], color: image::Rgb<u8>)
+// where
+// 	C: std::ops::Deref<Target = [u8]> + std::ops::DerefMut,
+// {
+// 	for point in points {
+// 		imageproc::drawing::draw_cross_mut(image, color, point.x.to_i32().unwrap(), point.y.to_i32().unwrap())
+// 	}
+// }
 
 fn draw_subpixel_points<C>(image: &mut image::ImageBuffer<image::Rgb<u8>, C>, points: &[Point<f32>], color: image::Rgb<u8>)
 where

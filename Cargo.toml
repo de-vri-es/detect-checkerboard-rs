@@ -2,12 +2,12 @@
 name = "detect-checkerboard"
 version = "0.1.0"
 authors = ["Maarten de Vries <maarten@de-vri.es>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-image = "0.23.13"
-imageproc = "0.22.0"
+image = "0.24.2"
+imageproc = "0.23.0"
 structopt = "0.3.0"
-show-image = { version = "0.8.1", features = ["image", "save"] }
-num = "0.3.0"
-float-ord = "0.2.0"
+show-image = { version = "0.12.3", features = ["image", "save"] }
+num = "0.4.0"
+float-ord = "0.3.2"
